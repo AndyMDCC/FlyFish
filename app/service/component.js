@@ -490,7 +490,7 @@ class ComponentService extends Service {
     }
 
     try {
-      await exec(`cd ${componentDevPath} && npm run build-dev`);
+      await exec(`cd ${componentDevPath} && NODE_ENV=sit npm run build-dev`);
     } catch (error) {
       returnData.msg = 'Compile Fail';
       returnData.data.error = error.message || error.stack;
