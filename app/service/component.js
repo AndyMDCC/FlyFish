@@ -309,7 +309,7 @@ class ComponentService extends Service {
     try {
       const componentPath = `${staticDir}/${componentsPath}/${componentId}`;
       const componentDevPath = `${componentPath}/${initComponentVersion}`;
-      await exec(`cd ${componentDevPath} && npm run build-dev`);
+      await exec(`cd ${componentDevPath} && NODE_ENV=sit npm run build-dev`);
     } catch (error) {
       returnData.msg = 'Build Workplace Fail';
       returnData.data.error = error.message || error.stack;
@@ -635,7 +635,7 @@ class ComponentService extends Service {
    */
   async buildRelease(componentId, componentReleasePath, releaseVersion, desc) {
     const { ctx } = this;
-    await exec(`cd ${componentReleasePath} && npm install && npm run build-production`);
+    await exec(`cd ${componentReleasePath} && npm install && NODE_ENV=sit npm run build-production`);
 
     await ctx.model.Component._updateOne({ id: componentId }, {
       developStatus: Enum.COMPONENT_DEVELOP_STATUS.ONLINE,
