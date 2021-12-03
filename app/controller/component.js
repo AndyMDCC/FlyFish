@@ -279,13 +279,13 @@ class ComponentsController extends BaseController {
 
       const mainJsPath = path.resolve(targetPath, 'src/main.js');
       const mainJsOrigin = await fs.readFile(mainJsPath, { encoding: 'utf8' });
-      const mainJsReplacement = mainJsOrigin.replace(/registerComponent\((\S+)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
+      const mainJsReplacement = mainJsOrigin.releaseMainOrigin.replace(/registerComponent\((.+?)\,(.+?)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
       await fs.writeFile(mainJsPath, mainJsReplacement);
 
       const settingJsPath = path.resolve(targetPath, 'src/setting.js');
       const settingJsOrigin = await fs.readFile(settingJsPath, { encoding: 'utf8' });
-      const settingJsReplacement = settingJsOrigin.replace(/registerComponentOptionsSetting\((\S+)\,\sOptionsSetting\);/, `registerComponentOptionsSetting(\'${componentId}\', \'${version}\', OptionsSetting);`)
-        .replace(/registerComponentDataSetting\((\S+)\,\sDataSetting\);/, `registerComponentDataSetting(\'${componentId}\', \'${initComponentVersion}\', DataSetting);`);
+      const settingJsReplacement = settingJsOrigin.replace(/registerComponentOptionsSetting\((.+?)\,(.+?)\,\sOptionsSetting\);/, `registerComponentOptionsSetting(\'${componentId}\', \'${initComponentVersion}\', OptionsSetting);`)
+        .replace(/registerComponentDataSetting\((.+?)\,(.+?)\,\sDataSetting\);/, `registerComponentDataSetting(\'${componentId}\', \'${initComponentVersion}\', DataSetting);`);
       await fs.writeFile(settingJsPath, settingJsReplacement);
     } finally {
       await fs.remove(file.filepath);
