@@ -4,6 +4,7 @@ const config = require('config');
 const { MongoClient } = require('mongodb');
 const _ = require('lodash');
 const path = require('path');
+const fs = require('fs');
 const simpleGit = require('simple-git');
 const axios = require('axios');
 
@@ -32,6 +33,8 @@ async function init() {
 
     for (const component of components) {
       const componentPath = path.resolve(componentDir, component._id.toString(), 'v-current');
+      if (!fs.existsSync(componentPath)) continue;
+
       const git = simpleGit(componentPath);
 
       const reqBody = {
