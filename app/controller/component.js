@@ -276,6 +276,17 @@ class ComponentsController extends BaseController {
       await fs.copy(file.filepath, `${targetPath}/${file.filename}`);
       const zip = new AdmZip(`${targetPath}/${file.filename}`);
       zip.extractAllTo(targetPath, true);
+
+      const mainJsPath = path.resolve(targetPath, 'src/main.js');
+      const mainJsOrigin = await fs.readFile(mainJsPath, { encoding: 'utf8' });
+      const mainJsReplacement = mainJsOrigin.replace(/registerComponent\((\S+)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
+      await fs.writeFile(mainJsPath, mainJsReplacement);
+
+      const settingJsPath = path.resolve(targetPath, 'src/setting.js');
+      const settingJsOrigin = await fs.readFile(settingJsPath, { encoding: 'utf8' });
+      const settingJsReplacement = settingJsOrigin.replace(/registerComponentOptionsSetting\((\S+)\,\sOptionsSetting\);/, `registerComponentOptionsSetting(\'${componentId}\', \'${version}\', OptionsSetting);`)
+        .replace(/registerComponentDataSetting\((\S+)\,\sDataSetting\);/, `registerComponentDataSetting(\'${componentId}\', \'${initComponentVersion}\', DataSetting);`);
+      await fs.writeFile(settingJsPath, settingJsReplacement);
     } finally {
       await fs.remove(file.filepath);
       await fs.remove(`${targetPath}/${file.filename}`);
