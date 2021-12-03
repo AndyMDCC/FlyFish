@@ -125,6 +125,8 @@ async function replaceFiles(dir, options) {
 
   files.forEach(async filename => {
     const thisPath = path.join(dir, filename);
+    const imgMatch = /\.(jpe?g|gif|png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/.test(filename);
+    if (imgMatch) return;
     const thisStat = await fsExtra.stat(thisPath);
     const isFile = thisStat.isFile();
     if (isFile) {
