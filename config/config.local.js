@@ -32,7 +32,7 @@ module.exports = appInfo => {
     },
   };
 
-  const staticDir = path.join(appInfo.baseDir, 'www');
+  const staticDir = path.join(__dirname, '../www');
   config.pathConfig = {
     staticDir,
   };
