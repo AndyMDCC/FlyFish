@@ -602,7 +602,7 @@ class ComponentService extends Service {
 
     try {
       const ignoreDirs = [ '.git', 'components', 'release', 'package-lock.json' ];
-      if (fs.existsSync(`${componentPath}/${releaseVersion}/node_modules`)) await exec(`rm -rf ${componentPath}/${releaseVersion}/node_modules`);
+      await exec(`rm -rf ${componentReleasePath}`);
       await ctx.helper.copyAndReplace(componentDevPath, componentReleasePath, ignoreDirs, { from: initComponentVersion, to: releaseVersion });
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
