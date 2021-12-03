@@ -601,7 +601,7 @@ class ComponentService extends Service {
     const componentReleasePath = `${componentPath}/${releaseVersion}`;
 
     try {
-      const ignoreDirs = [ '.git', 'components', 'release', 'package-lock.json' ];
+      const ignoreDirs = [ '.git', 'components', 'release', 'package-lock.json', 'node_modules' ];
       await exec(`rm -rf ${componentReleasePath}`);
       await ctx.helper.copyAndReplace(componentDevPath, componentReleasePath, ignoreDirs, { from: initComponentVersion, to: releaseVersion });
     } catch (error) {
