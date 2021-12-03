@@ -38,7 +38,7 @@ module.exports = appInfo => {
   };
 
   config.componentGit = {
-    namespaceId: 2826,
+    namespaceId: 2885,
     privateToken: 'cetyg4VERmdwxQBAGgsF',
   };
 
