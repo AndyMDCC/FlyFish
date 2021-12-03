@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
+const path = require('path');
 
 const BaseController = require('./base');
 const CODE = require('../lib/error');
@@ -292,7 +293,10 @@ class ComponentsController extends BaseController {
     const destZip = `${staticDir}/${componentsPath}/${componentId}/${componentInfo.name}.zip`;
     try {
       const zip = new AdmZip();
-      zip.addLocalFolder(sourceFolder);
+      zip.addLocalFolder(sourceFolder, '', src => {
+        const dirname = src.split('/')[0];
+        return dirname !== 'node_modules';
+      });
       zip.writeZip(destZip);
       const zipName = `${componentInfo.name}.zip`;
 

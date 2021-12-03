@@ -26,7 +26,7 @@ module.exports = appInfo => {
   };
 
   config.mongoose = {
-    url: 'mongodb://10.2.3.247:27017/flyfish',
+    url: 'mongodb://10.2.3.56:27017/flyfish',
     options: {
       useUnifiedTopology: true,
     },
