@@ -29,7 +29,7 @@ async function init() {
     await init();
     const componentDir = path.resolve(staticDir, 'components');
 
-    const components = await db.collection('components').find().toArray();
+    const components = await db.collection('components').find({ git_lab_project_id: { $exists: false } }).toArray();
 
     for (const component of components) {
       const componentPath = path.resolve(componentDir, component._id.toString(), 'v-current');
