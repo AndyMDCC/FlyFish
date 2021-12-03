@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-09 10:45:26
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2021-12-02 15:38:29
+ * @LastEditTime: 2021-12-03 15:22:51
  */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState,useEffect, useRef } from "react";
@@ -403,11 +403,12 @@ const ComponentDevelop = observer((props) => {
       </Sider>
       <Content>
           <div className={styles.rightWraper}>
-            <Row className={styles.handleWrap} gutter={10}>
-              <Col span={4}>
+          {/* <Row className={styles.handleWrap} gutter={10}>
+              <Col span={5}>
                 <span>组件名称：</span>
                 <Input placeholder='请输入'
-                style={{width:'calc(100% - 70px)'}}
+                  // style={{width:'calc(100% - 70px)'}}
+                  style={{width:200}}
                   value={searchName}
                   onChange={(e)=>{
                     setSearchName(e.target.value);
@@ -417,8 +418,12 @@ const ComponentDevelop = observer((props) => {
                   }}
                 ></Input>
               </Col>
-              <Col span={6}>
-                <Input style={{width:'100%'}} placeholder='输入描述/标签/创建人查找组件'
+              <Col span={5}>
+                <span>　</span>
+                <Input 
+                  // style={{width:'100%'}} 
+                  style={{ width: 250 }}
+                  placeholder='输入描述/标签/创建人查找组件'
                   value={searchKey}
                   onChange={(e)=>{
                     setSearchKey(e.target.value);
@@ -433,7 +438,8 @@ const ComponentDevelop = observer((props) => {
                   showSearch
                   allowClear
                   placeholder='请选择'
-                  style={{ width: 'calc(100% - 70px)' }}
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
                   value={searchProject}
                   onChange={(val)=>{
                     setSearchProject(val);
@@ -454,7 +460,8 @@ const ComponentDevelop = observer((props) => {
                 <span>开发状态：</span>
                 <Select
                   placeholder='请选择'
-                  style={{ width: 'calc(100% - 70px)' }}
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
                   value={searchStatus}
                   onChange={(val)=>{
                     setSearchStatus(val);
@@ -470,7 +477,8 @@ const ComponentDevelop = observer((props) => {
                 <span>组件类别：</span>
                 <Select
                   placeholder='请选择'
-                  style={{ width: 'calc(100% - 70px)' }}
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
                   value={searchType}
                   onChange={(val)=>{
                     setSearchType(val);
@@ -491,7 +499,106 @@ const ComponentDevelop = observer((props) => {
                   }}
                 >添加组件</Button>
               </Col>
-            </Row>
+            </Row> */}
+            
+            <div className={styles.handleWrap}>
+              <div>
+                <span>组件名称：</span>
+                <Input placeholder='请输入'
+                  // style={{width:'calc(100% - 70px)'}}
+                  style={{width:150}}
+                  value={searchName}
+                  onChange={(e)=>{
+                    setSearchName(e.target.value);
+                    // setSearchKey('');
+                    setCurPage(0);
+                    getListData();
+                  }}
+                ></Input>
+              </div>
+              <div>
+                <span>　</span>
+                <Input 
+                  // style={{width:'100%'}} 
+                  style={{ width: 250 }}
+                  placeholder='输入描述/标签/创建人查找组件'
+                  value={searchKey}
+                  onChange={(e)=>{
+                    setSearchKey(e.target.value);
+                    setCurPage(0);
+                    getListData();
+                  }}
+                ></Input>
+              </div>
+              <div>
+                <span>项目名称：</span>
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder='请选择'
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
+                  value={searchProject}
+                  onChange={(val)=>{
+                    setSearchProject(val);
+                    getListData();
+                  }}
+                  filterOption={(input, option) =>
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {
+                    projectsData.map(item=>{
+                      return <Option value={item.id} key={item.id}>{item.name}</Option>;
+                    })
+                  }
+                </Select>
+              </div>
+              <div>
+                <span>开发状态：</span>
+                <Select
+                  placeholder='请选择'
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
+                  value={searchStatus}
+                  onChange={(val)=>{
+                    setSearchStatus(val);
+                    getListData();
+                  }}
+                >
+                  <Option value='all'>全部</Option>
+                  <Option value="doing">开发中</Option>
+                  <Option value="online">已上线</Option>
+                </Select>
+              </div>
+              <div>
+                <span>组件类别：</span>
+                <Select
+                  placeholder='请选择'
+                  // style={{ width: 'calc(100% - 70px)' }}
+                  style={{ width: 150 }}
+                  value={searchType}
+                  onChange={(val)=>{
+                    setSearchType(val);
+                    getListData();
+                  }}
+                >
+                  <Option value='all'>全部</Option>
+                  <Option value="common">基础组件</Option>
+                  <Option value="project">项目组件</Option>
+                </Select>
+              </div>
+              <div>
+                <Button 
+                  type='primary' 
+                  style={{borderRadius:'3px'}}
+                  onClick={()=>{
+                    setAddModalvisible(true);
+                  }}
+                >添加组件</Button>
+                <span>　</span>
+              </div>
+            </div>
             <div className={styles.listWraper}>
               <Table
                 columns={columns}

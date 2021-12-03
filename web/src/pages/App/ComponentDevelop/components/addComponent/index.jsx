@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './style.less';
 import { observer,toJS } from "@chaoswise/cw-mobx";
 import store from "../../model/index";
-import { Form,Input,Select,Button,Row,Col,Icon,Popover,TreeSelect,message } from 'antd';
+import { Form,Input,Select,Button,Row,Col,Icon,Popover,TreeSelect,message,Spin } from 'antd';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { getProjectsService,getTagsService,addComponentService, getListDataService,addTagService } from '../../services';
@@ -16,6 +16,7 @@ const AddComponent = observer((props)=>{
   const { setAddModalvisible,treeData,projectsData,tagsData,getListData,getTagsData,userInfo,selectedData } = store;
 
   // console.log(toJS(selectedData));
+  const [addloading, setAddloading] = useState(false);
 
   const formItemLayout = {
     labelCol: { span:4 },
@@ -32,8 +33,10 @@ const AddComponent = observer((props)=>{
         if (values.tags) { 
           values.tags = values.tags.map(item=>({name:item}))
         }
+        setAddloading(true)
         const res = await addComponentService(values);
         if (res && res.code==0) {
+          setAddloading(false)
           message.success('添加成功！');
           props.form.resetFields()
           setAddModalvisible(false);
@@ -41,6 +44,7 @@ const AddComponent = observer((props)=>{
           //刷新标签库
           getTagsData();
         }else{
+          setAddloading(false)
           message.error(res.msg)
         }
       }
@@ -193,7 +197,10 @@ const AddComponent = observer((props)=>{
         }}>取消</Button>
       </Col>
       <Col span={2} push={18}>
-        <Button type='primary' htmlType='submit'>保存</Button>
+        <Button type='primary' htmlType='submit' disabled={addloading}>
+          <Spin spinning={addloading} size='small' style={{marginRight:10}}/> 
+          <span>保存</span>
+        </Button>
       </Col>
     </Row>
   </Form>

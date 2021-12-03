@@ -127,7 +127,7 @@ const CodeDevelop = observer((props)=>{
         }
       </div>
     </div>
-    <div ref={mainDiv} className={styles.main} style={{flexDirection:layout=='row'?'row':'column',height:layout=='row'?'100%':1400}}
+    <div ref={mainDiv} className={styles.main} style={{flexDirection:layout=='row'?'row':'column',height:layout=='row'?'calc(100% - 55px)':1400}}
       onMouseMove={(e)=>{
         if (moveMode) {
           if (layout=='row') {
