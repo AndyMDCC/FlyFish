@@ -578,8 +578,7 @@ class ComponentService extends Service {
     }
 
     const newVersion = compatible ? _.get(componentInfo, [ 'versions', (componentInfo.versions || []).length - 1, 'no' ], no || 'v1') : no;
-    const createResult = await this.initReleaseWorkspace(componentId, newVersion);
-    await ctx.model.Component._updateOne({ id: componentId }, { developStatus: Enum.COMPONENT_DEVELOP_STATUS.ONLINE, $push: { versions: { no: newVersion, desc, status: Enum.COMMON_STATUS.VALID, time: Date.now() } } });
+    const createResult = await this.initReleaseWorkspace(componentId, newVersion, desc);
 
     if (createResult.msg !== 'Success') {
       returnData.msg = createResult.msg;
@@ -590,8 +589,8 @@ class ComponentService extends Service {
     return returnData;
   }
 
-  async initReleaseWorkspace(componentId, releaseVersion) {
-    const { ctx, config } = this;
+  async initReleaseWorkspace(componentId, releaseVersion, desc) {
+    const { ctx, config, logger } = this;
     const { pathConfig: { staticDir, componentsPath, initComponentVersion } } = config;
 
     const returnInfo = { msg: 'Success', data: {} };
@@ -607,23 +606,47 @@ class ComponentService extends Service {
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
       returnInfo.data.error = error || error.stack;
+
+      logger.error(`${componentId} Init Workplace Fail: ${JSON.stringify(error || error.stack)}`);
       return returnInfo;
     }
 
-    this.genComponentCover(componentId, componentReleasePath);
+    try {
+      const savePath = `${componentReleasePath}/release/cover.png`;
+      this.buildRelease(componentId, componentReleasePath, releaseVersion, desc);
+      this.genCoverImage(componentId, savePath);
+    } catch (error) {
+      // returnInfo.msg = 'Build Workplace Fail';
+      // returnInfo.data.error = error || error.stack;
+
+      logger.error(`${componentId} Build Workplace Fail: ${JSON.stringify(error || error.stack)}`);
+      // return returnInfo;
+    }
 
     return returnInfo;
   }
 
-  async genComponentCover(componentId, componentReleasePath) {
-    const { logger } = this;
-    try {
-      await exec(`cd ${componentReleasePath} && npm install && npm run build-production`);
-      const savePath = `${componentReleasePath}/release/cover.png`;
-      this.genCoverImage(componentId, savePath);
-    } catch (error) {
-      logger.error(`Build Workplace Fail: ${JSON.stringify(error.stack || error)}`);
-    }
+  /**
+   * build
+   * @param {*} componentId
+   * @param {*} componentReleasePath
+   * @param {*} releaseVersion
+   * @param {*} desc
+   */
+  async buildRelease(componentId, componentReleasePath, releaseVersion, desc) {
+    const { ctx } = this;
+    await exec(`cd ${componentReleasePath} && npm install && npm run build-production`);
+
+    await ctx.model.Component._updateOne({ id: componentId }, {
+      developStatus: Enum.COMPONENT_DEVELOP_STATUS.ONLINE,
+      $push: {
+        versions: {
+          desc,
+          no: releaseVersion,
+          status: Enum.COMMON_STATUS.VALID, time: Date.now(),
+        },
+      },
+    });
   }
 
   // 初始化开发组件空间
