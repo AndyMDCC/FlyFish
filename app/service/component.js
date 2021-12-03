@@ -610,17 +610,20 @@ class ComponentService extends Service {
       return returnInfo;
     }
 
+    this.genComponentCover(componentId, componentReleasePath);
+
+    return returnInfo;
+  }
+
+  async genComponentCover(componentId, componentReleasePath) {
+    const { logger } = this;
     try {
-      await exec(`cd ${componentReleasePath} && npm run build-production`);
+      await exec(`cd ${componentReleasePath} && npm install && npm run build-production`);
       const savePath = `${componentReleasePath}/release/cover.png`;
       this.genCoverImage(componentId, savePath);
     } catch (error) {
-      returnInfo.msg = 'Build Workplace Fail';
-      returnInfo.data.error = error || error.stack;
-      return returnInfo;
+      logger.error(`Build Workplace Fail: ${JSON.stringify(error.stack || error)}`);
     }
-
-    return returnInfo;
   }
 
   // 初始化开发组件空间
