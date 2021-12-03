@@ -74,7 +74,7 @@ async function init() {
       let password = `${user.user_name}_yunzhihui123`;
       if (user.user_name === 'admin') {
         role = roleMap.admin;
-        password = `${user.user_name}_123456`;
+        password = 'utq#SpV!';
       }
       const doc = {
         username: user.user_name,
