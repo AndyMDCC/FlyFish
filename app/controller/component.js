@@ -279,7 +279,7 @@ class ComponentsController extends BaseController {
 
       const mainJsPath = path.resolve(targetPath, 'src/main.js');
       const mainJsOrigin = await fs.readFile(mainJsPath, { encoding: 'utf8' });
-      const mainJsReplacement = mainJsOrigin.releaseMainOrigin.replace(/registerComponent\((.+?)\,(.+?)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
+      const mainJsReplacement = mainJsOrigin.replace(/registerComponent\((.+?)\,(.+?)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
       await fs.writeFile(mainJsPath, mainJsReplacement);
 
       const settingJsPath = path.resolve(targetPath, 'src/setting.js');
