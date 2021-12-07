@@ -16,6 +16,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
   function EditProjectModal({ templateapplicationList, industryList, curPage, pageSize, ProgressId, total, applicationList, activeProject, type, isAddModalVisible, applicationLength }) {
     let [checkFlag, setCheckFlag] = useState(null);
     let [projectName, setProjectName] = useState('');
+    let [exportFlag, setExportFlag] = useState([]);
     const {
       setProjectId, getIndustrysList, getApplicationList, getTemplateApplicationList, setTemplateActiveProject, setActiveProject, setType, openAddProjectModal, closeAppProjectModal
     } = store;
@@ -87,9 +88,10 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
       setType(value);
       getApplicationList({ curPage: 0 });
     };
-    const exportCode = async (id) => {
+    const exportCode = async (id,name) => {
       axios.get(`/api/applications/export/${id}`, {
-        responseType: 'blob'
+        responseType: 'blob',
+        timeout:0
       },
       ).then((res) => {
         const $link = document.createElement("a");
@@ -102,7 +104,15 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
         document.body.appendChild($link);
         $link.click();
         document.body.removeChild($link); // 下载完成移除元素
-        window.URL.revokeObjectURL($link.href); // 释放掉blob对象
+      }).catch(() => {
+        message.error(`${name}导出失败，请重新导出`);
+      }).finally(() => {
+        setExportFlag(exportFlag => {
+          if (exportFlag.indexOf(id) != -1) {
+            exportFlag.splice(exportFlag.indexOf(id), 1);
+          }
+          return exportFlag.splice(0);
+        });
       });
     };
     // 请求列表数据
@@ -182,10 +192,16 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                           openAddProjectModal();
                         }}><Icon type="copy" style={{ color: '#333' }} /></a>
                       </Tooltip>
-                      <Tooltip key="export" title="导出" onClick={() => {
-                        exportCode(item.id);
-                      }}>
-                        <a title="导出" target="_blank" ><Icon type="export" style={{ color: '#333' }} /></a>
+                      <Tooltip key="export" title="导出">
+                        <a title="导出" target="_blank" >
+                          {
+                            exportFlag.includes(item.id) ? <Icon type="loading" style={{ color: '#333' }} /> : <Icon onClick={() => {
+                              exportCode(item.id,item.name);
+                              let arr = [...exportFlag, item.id];
+                              setExportFlag(arr);
+                            }} type="export" style={{ color: '#333' }} />
+                          }
+                        </a>
                       </Tooltip>
                       <Tooltip key="edit" title="编辑">
                         <a title="编辑" target="_blank" onClick={() => {

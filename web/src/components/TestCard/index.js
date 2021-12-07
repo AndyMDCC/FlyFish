@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Popconfirm } from "@chaoswise/ui";
-import { Card, Tag, Col, Row, Icon, Avatar, Empty, message, Tooltip } from 'antd';
+import { Card, Tag, Col, Row, Icon, Avatar, Empty, message, Tooltip, Spin } from 'antd';
 const { Meta } = Card;
 import styles from './index.less';
 import { TAG_COLORS, APP_DEVELOP_STATUS } from '@/config/global';
@@ -19,7 +19,7 @@ const computedTagColorByStatus = (status) => {
 
 export default Form.create({ name: "BASIC_CARD" })(
     function BasicCard({ number, projectID, onDelete, setActiveCard, addOwn, showOwn, checkCard, value, state, showStateTag, actions, canDelete, canAdd }) {
-
+        let [loadFlag, setLoadFlag] = React.useState([]);
         const tradesArr = (trades) => {
             if (trades.length === 0) {
                 return '暂无';
@@ -34,24 +34,24 @@ export default Form.create({ name: "BASIC_CARD" })(
             }
         };
         let [checkid, setCheckId] = React.useState('');
-        let [isOwnArr, setIsOwnArr] = React.useState([]);
+
         return (
             <Row justify="space-around" gutter={['16', '16']} style={{ margin: '10px' }} className={styles.cardList}>
                 {
-                    value && value.list && value.list.length > 0 ? value.list.map((item, index) => <Col span={number || 8} key={index}>
+                    value && value.list && value.list.length > 0 ? value.list.map((item, index) => <Col span={number || 8} key={item.id}>
                         <Card
                             onClick={() => {
                                 setActiveCard && setActiveCard(item);
                             }}
-                            style={{ boxShadow: checkid == item.id ? '3px 3px 3px 3px #dedede' : null }}
+                            style={{ boxShadow: checkid == item.id ? '3px 3px 3px 3px #dedede' : null, position: 'relative' }}
                             cover={
                                 <>
                                     {
-                                        canDelete&&item.isLib ? <Popconfirm title="确认删除？" okText="确认" cancelText="取消" onConfirm={() => {
+                                        canDelete && item.isLib ? <Popconfirm title="确认删除？" okText="确认" cancelText="取消" onConfirm={() => {
                                             onDelete && onDelete(item);
                                         }}>
                                             <Tag className={styles.deleteTag} color='red' >
-                                                 <Icon type="minus" />
+                                                <Icon type="minus" />
                                             </Tag>
                                         </Popconfirm> : null
                                     }
@@ -71,15 +71,24 @@ export default Form.create({ name: "BASIC_CARD" })(
                                         !showStateTag ? null : <Tag className={styles.tag} color={computedTagColorByStatus(item.developStatus)}>{computedTagWordByStatus(item.developStatus)}</Tag>
                                     }
                                     <img
-                                    style={{height:number?'157px':'240px'}}
+                                        style={{ height: number ? '157px' : '240px' }}
                                         onClick={() => {
                                             checkCard && checkCard(item.id);
                                             setCheckId(item.id);
                                         }}
+                                        onLoad={(event) => {
+                                            const target = event.target;
+                                            if (target.complete) {
+                                                let a = [...loadFlag, item.id];
+                                                setLoadFlag(a);
+                                            }
+
+                                        }}
                                         alt="暂无照片"
-                                        // src={logo}
-                                        src={'/api/'+item.cover}
+                                        src={'/api/' + item.cover}
                                     />
+                                    {loadFlag.includes(item.id) ? null : <Spin size="default" className={styles.img} style={{ height: number ? '157px' : '240px', lineHeight: number ? '157px' : '240px' }} />}
+
                                 </>
                             }
                             actions={actions && actions(item).props.children}
@@ -90,13 +99,6 @@ export default Form.create({ name: "BASIC_CARD" })(
                                     setCheckId(item.id);
                                 }}
                                 title={(() => {
-                                    // let title;
-                                    // if (!actions) title = `${item.name || '暂无'}`;
-                                    // if (state) {
-                                    //     title = `${item.name || '暂无'}`;
-                                    // } else {
-                                    //     title = `${item.name || '暂无'}`;
-                                    // }
                                     return <Tooltip title={item.name}>
                                         <span>{`${item.name || '暂无'}`}</span>
                                     </Tooltip>;
@@ -111,7 +113,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                             <Tooltip title={item.creator}>
                                                 <p className='titleOverflow' >创建人：{item.creator || '暂无'}</p>
                                             </Tooltip>
-                                            <Tooltip title={item.tags &&tradesArr(item.tags)}>
+                                            <Tooltip title={item.tags && tradesArr(item.tags)}>
                                                 <p className='titleOverflow'>标签：{item.tags && tradesArr(item.tags)}</p>
                                             </Tooltip>
                                         </div>

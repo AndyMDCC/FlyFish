@@ -145,9 +145,9 @@ const Layout = ({
     history.replace('/login');
   };
   const rightMenu = (<Menu>
-    <Menu.Item key="0">
+    <Menu.Item key="0" onClick={clearCookies}>
     <Icon type="logout" />
-    <span style={{textAlign:'center' }} onClick={clearCookies}>退出</span>
+    <span style={{textAlign:'center' }} >退出</span>
     </Menu.Item>
   </Menu>);
   return (
