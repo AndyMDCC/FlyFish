@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-09 10:45:26
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2021-12-03 16:03:57
+ * @LastEditTime: 2021-12-08 10:39:56
  */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState,useEffect, useRef } from "react";
@@ -352,7 +352,8 @@ const ComponentDevelop = observer((props) => {
     // window.URL.revokeObjectURL($link.href); // 释放掉blob对象
 
     axios.get(`/api/components/export-source-code/${id}`,{
-      responseType:'blob'
+      responseType:'blob',
+      timeout:0
     },
     ).then((res)=>{
       const $link = document.createElement("a");
